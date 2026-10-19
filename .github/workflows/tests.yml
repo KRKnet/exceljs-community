@@ -114,6 +114,11 @@ jobs:
       - run: npm run test:size
         env:
           CI: true
+      # Checks the shape of the built bundles, including that none of them
+      # ships a direct eval for consumers' bundlers to warn about.
+      - run: npm run test:dist
+        env:
+          CI: true
 
   typescript:
     timeout-minutes: 15
