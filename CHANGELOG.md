@@ -10,6 +10,32 @@ who reported and diagnosed each problem upstream.
 Every release is a drop-in replacement for `exceljs@4.4.0` unless an entry says
 otherwise in as many words.
 
+## 5.2.1 - 2026-10-19
+
+Drop-in replacement for `exceljs@4.4.0` and for every 5.x release before it.
+No API changed.
+
+### Fixed
+
+- **The browser bundles no longer contain a direct `eval`.** It came from
+  `vm-browserify`, which browserify bundled because `asn1.js` (reached through
+  `crypto-browserify`) asks for `vm` to give one constructor a name, inside a
+  `try/catch` with its own fallback. This library never reaches those ASN.1
+  paths. Bundlers such as rolldown warned about it on every consumer build
+  ("Use of direct eval function is strongly discouraged"), and security
+  scanners flagged it. `vm` is now left out of the bundle, so `asn1.js` takes
+  its fallback, and both minified bundles are about 1.7 KB smaller.
+- **Patched the production dependency tree for `brace-expansion`.** `archiver`
+  reaches it through `readdir-glob` and `minimatch`; the lockfile now resolves
+  `brace-expansion@5.0.12`, which includes the fixes for GHSA-q2hr-2g5m-vwhr,
+  GHSA-qhr7-859c-m2p7 and GHSA-6j4f-fj2g-mc7p. The declared ranges already
+  allowed it, so installs that resolve fresh were not affected.
+
+### Project
+
+- CI now runs `spec/dist` after building the bundles, and it fails if any of
+  them contains a direct `eval`.
+
 ## 5.2.0 - 2026-09-17
 
 Drop-in replacement for `exceljs@4.4.0` and for every 5.x release before it.

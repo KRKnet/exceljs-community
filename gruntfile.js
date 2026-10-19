@@ -42,6 +42,12 @@ module.exports = function(grunt) {
             },
           ],
         ],
+        // asn1.js (via crypto-browserify) is the only module asking for 'vm',
+        // and only to name a constructor inside a try/catch with a fallback.
+        // Bundling vm-browserify for that ships a direct eval that consumers'
+        // bundlers warn about. An ignored module resolves to {}, so the call
+        // throws and asn1.js takes its own fallback.
+        ignore: ['vm'],
         browserifyOptions: {
           // enable source map for browserify
           debug: true,
